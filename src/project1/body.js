@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../index.css'
 import images from './images';
 
 function Body() {
+    const [Gdata, func1] = useState();
+    const [show, showSet] = useState(false); 
 
     const [value, func] = useState(
         {
-            top: "", 
             btm: "",
             img: ""  
         }
@@ -35,6 +36,22 @@ function Body() {
             }
         )
     }
+    useEffect(() => {
+        fetch("https://meme-api.com/gimme/1")
+        .then(res => res.json())
+        .then(data => {
+            data.memes.map(item => {
+                func1(prev => item.url)
+            })
+        }) }, 
+    [show]); 
+
+    const generateClick = () => {
+        
+        console.log(Gdata)
+
+    }  
+
 
     console.log(value); 
 
@@ -46,14 +63,6 @@ function Body() {
         <div className='Body'> 
             <form onSubmit={submitting}>
                 <div className='labeling'>
-                <label htmlFor='first' id='flabel'>Top Text</label>
-                <input 
-                type="text"
-                id="first"
-                name='top'
-                value={value.top}
-                onChange={handler}
-                ></input>
                 
                 <label htmlFor='last' id='llabel'>Bottom Text</label>
                 <input 
@@ -69,17 +78,21 @@ function Body() {
                 <button 
                 type='submit' 
                 id='button'
-                onClick={randomize}
+                onClick={() => {
+                    generateClick(); 
+                    showSet(prev => !prev); 
+                }}
                 >Generate</button>
                 </div>
             </form> 
 
             <div className='img-class'>    
-                { value.img && <img 
-                src={value.img}
+                { Gdata && <img 
+                // src={value.img}
+                src={Gdata}
                 id='Img'/>}
-                {value.img && <h1 id='img-h1'>{value.top}</h1>}
-                {value.img && <h1 id='img-h2'>{value.btm}</h1>}
+                {Gdata && <h1 id='img-h1'>{value.top}</h1>}
+                {Gdata && <h1 id='img-h2'>{value.btm}</h1>}
             </div>
         </div>
     )
